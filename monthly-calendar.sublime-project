@@ -1,0 +1,21 @@
+{
+	"build_systems":
+	[
+		{
+			"file_patterns":
+			[
+				"monthly-calendar.ino"
+			],
+			"name": "Run script",
+			"osx": {
+				"shell_cmd": "make flash"
+			}
+		}
+	],
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	]
+}
