@@ -4,7 +4,7 @@
 		{
 			"file_patterns":
 			[
-				"monthly-calendar.ino"
+				"*.ino"
 			],
 			"name": "Run script",
 			"osx": {
