@@ -1,3 +1,18 @@
+void updateBrightness() {
+	int value = analogRead(LIGHT_SENSOR_PIN);
+	value -= LIGHT_SENSOR_MIN;
+	if (value < 0) value = 0;
+	value *= PIXEL_BRIGHTNESS_MAX - PIXEL_BRIGHTNESS_MIN;
+	value /= LIGHT_SENSOR_MAX - LIGHT_SENSOR_MIN;
+	value += PIXEL_BRIGHTNESS_MIN;
+	if (value > PIXEL_BRIGHTNESS_MAX) value = PIXEL_BRIGHTNESS_MAX;
+
+	int currentBrightness = pixels.getBrightness();
+	if (abs(value - currentBrightness) > 1) {
+		pixels.setBrightness(value);
+	}
+}
+
 void updateDisplay() {
 	switch (state) {
 	case STATE_INIT:
