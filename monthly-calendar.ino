@@ -4,29 +4,30 @@
 #define DATE_COUNT 366
 
 #define SENSOR0_PIN A1
-#define SENSOR1_PIN A4
+#define SENSOR1_PIN A3
 
-#define LIGHT_SENSOR_PIN A2
+#define LIGHT_SENSOR_PIN A5
 #define LIGHT_SENSOR_MIN 0x100
 #define LIGHT_SENSOR_MAX 0x300
 
 #define PIXEL_BRIGHTNESS_MIN 4
 #define PIXEL_BRIGHTNESS_MAX 36
-#define PIXEL_PIN 6
+#define PIXEL0_PIN 3
+#define PIXEL1_PIN 5
+#define PIXEL2_PIN 7
 #define PIXEL_COUNT 31
-#define PIXEL(n) (PIXEL_COUNT - 1 - (n))
 
 #define EEPROM_STATUSES 0
 #define EEPROM_DATE (EEPROM_STATUSES + DATE_COUNT)
 
-#define COLOR_NONE (pixels.Color(0, 0, 0))
-#define COLOR_SUCCESS (pixels.Color(32, 160, 48))
-#define COLOR_FAILURE (pixels.Color(255, 54, 0))
-#define COLOR_OOB (pixels.Color(255, 165, 0))
-#define COLOR_TODAY1 (pixels.Color(16, 16, 64))
-#define COLOR_TODAY2 (pixels.Color(64, 64, 192))
-#define COLOR_RESET (pixels.Color(255, 0, 0))
-#define COLOR_INIT (pixels.Color(255, 255, 255))
+#define COLOR_NONE (pixels0.Color(0, 0, 0))
+#define COLOR_SUCCESS (pixels0.Color(32, 160, 48))
+#define COLOR_FAILURE (pixels0.Color(255, 54, 0))
+#define COLOR_OOB (pixels0.Color(255, 165, 0))
+#define COLOR_TODAY1 (pixels0.Color(16, 16, 64))
+#define COLOR_TODAY2 (pixels0.Color(64, 64, 192))
+#define COLOR_RESET (pixels0.Color(255, 0, 0))
+#define COLOR_INIT (pixels0.Color(255, 255, 255))
 
 #define STATE_INIT 0
 #define STATE_CALENDAR 1
@@ -43,7 +44,10 @@
 #define PRESS_FRAMES_SHORT 3
 #define PRESS_FRAMES_LONG 30
 
-Adafruit_NeoPixel pixels(PIXEL_COUNT, PIXEL_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels0(10, PIXEL0_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels1(10, PIXEL1_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels2(11, PIXEL2_PIN, NEO_GRB + NEO_KHZ800);
+
 int monthLengths[] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 int monthStarts[12];
 int monthEnds[12];
@@ -65,8 +69,13 @@ void setup() {
 	pinMode(SENSOR0_PIN, INPUT);
 	pinMode(SENSOR1_PIN, INPUT);
 
-	pixels.begin();
-	pixels.setBrightness(PIXEL_BRIGHTNESS_MIN);
+	pixels0.begin();
+	pixels1.begin();
+	pixels2.begin();
+	
+	pixels0.setBrightness(PIXEL_BRIGHTNESS_MIN);
+	pixels1.setBrightness(PIXEL_BRIGHTNESS_MIN);
+	pixels2.setBrightness(PIXEL_BRIGHTNESS_MIN);
 
 	for (int i = 0; i < 12; ++i) {
 		monthStarts[i] = i == 0 ? 0 : (monthStarts[i-1] + monthLengths[i-1]);

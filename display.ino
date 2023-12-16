@@ -1,3 +1,27 @@
+void clearPixels() {
+	pixels0.clear();
+	pixels1.clear();
+	pixels2.clear();
+}
+
+void setPixelColor(int pixel, uint32_t color) {
+	if (pixel >= 20) {
+		pixels2.setPixelColor(30 - pixel, color);
+	}
+	else if (pixel >= 10) {
+		pixels1.setPixelColor(19 - pixel, color);
+	}
+	else {
+		pixels0.setPixelColor(9 - pixel, color);
+	}
+}
+
+void updatePixels() {
+	pixels0.show();
+	pixels1.show();
+	pixels2.show();
+}
+
 void updateBrightness() {
 	int value = analogRead(LIGHT_SENSOR_PIN);
 	value -= LIGHT_SENSOR_MIN;
@@ -7,9 +31,11 @@ void updateBrightness() {
 	value += PIXEL_BRIGHTNESS_MIN;
 	if (value > PIXEL_BRIGHTNESS_MAX) value = PIXEL_BRIGHTNESS_MAX;
 
-	int currentBrightness = pixels.getBrightness();
+	int currentBrightness = pixels0.getBrightness();
 	if (abs(value - currentBrightness) > 1) {
-		pixels.setBrightness(value);
+		pixels0.setBrightness(value);
+		pixels1.setBrightness(value);
+		pixels2.setBrightness(value);
 	}
 }
 
@@ -34,9 +60,9 @@ void updateDisplay() {
 }
 
 void displayInit() {
-	pixels.clear();
-	pixels.setPixelColor(PIXEL(animationPhase/2), COLOR_INIT);
-	pixels.show();
+	clearPixels();
+	setPixelColor(animationPhase/2, COLOR_INIT);
+	updatePixels();
 
 	++animationPhase;
 	if (animationPhase >= 2*PIXEL_COUNT) {
@@ -62,55 +88,55 @@ void displayCalendar() {
 		}
 	}
 
-	pixels.clear();
+	clearPixels();
 	for (int i = 0; i < PIXEL_COUNT; ++i) {
 		if (i >= monthLength) {
-			pixels.setPixelColor(PIXEL(i), COLOR_OOB);
+			setPixelColor(i, COLOR_OOB);
 		} else switch (statuses[monthStart + i]) {
 			case STATUS_NONE:
 				if (monthStart + i == date) {
-					pixels.setPixelColor(PIXEL(i), animationPhase < 150 ? COLOR_TODAY1 : COLOR_TODAY2);
+					setPixelColor(i, animationPhase < 150 ? COLOR_TODAY1 : COLOR_TODAY2);
 				} else {
-					pixels.setPixelColor(PIXEL(i), COLOR_NONE);
+					setPixelColor(i, COLOR_NONE);
 				}
 				break;
 
 			case STATUS_SUCCESS:
-				pixels.setPixelColor(PIXEL(i), COLOR_SUCCESS);
+				setPixelColor(i, COLOR_SUCCESS);
 				break;
 
 			case STATUS_FAILURE:
-				pixels.setPixelColor(PIXEL(i), COLOR_FAILURE);
+				setPixelColor(i, COLOR_FAILURE);
 				break;
 		}
 	}
-	pixels.show();
+	updatePixels();
 	animationPhase = (animationPhase + 1) % 300;
 }
 
 void displayRainbow() {
-	pixels.clear();
+	clearPixels();
 
 	long hue = 256 * animationPhase;
 	for (int i = 0; i < PIXEL_COUNT; ++i) {
 		int pixelHue = hue + (i * 2048);
-		pixels.setPixelColor(i, pixels.gamma32(pixels.ColorHSV(pixelHue)));
+		setPixelColor(PIXEL_COUNT-1 - i, pixels0.gamma32(pixels0.ColorHSV(pixelHue)));
 	}
-	pixels.show();
+	updatePixels();
 	animationPhase = (animationPhase + 1) % 256;
 }
 
 void displayOff() {
-	pixels.clear();
-	pixels.show();
+	clearPixels();
+	updatePixels();
 }
 
 void displayReset() {
-	pixels.clear();
+	clearPixels();
 	for (int i = 0; i < animationPhase/4; ++i) {
-		pixels.setPixelColor(PIXEL(i), COLOR_RESET);
+		setPixelColor(i, COLOR_RESET);
 	}
-	pixels.show();
+	updatePixels();
 
 	++animationPhase;
 	if (animationPhase >= 4*(PIXEL_COUNT+1)) {
